@@ -1,0 +1,1 @@
+    import fileContent from "./path/to/your/file.txt" with { type: "text" };

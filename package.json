@@ -1,0 +1,14 @@
+{
+  "name": "aoc2025",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "day": "bun run main.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
