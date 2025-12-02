@@ -3,7 +3,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "day": "bun run main.ts"
+    "day": "bun run main.ts",
+    "debug": "bun --inspect-wait main.ts"
   },
   "devDependencies": {
     "@types/bun": "latest"
