@@ -19,12 +19,12 @@ export const test = `
 
 export function part1(input: string) {
   const tm = new TachyonManifold(input);
-  tm.run();
-  return tm.totalSplits;
+  return tm.run();
 }
 
 export function part2(input: string) {
-  return 20;
+  const tm = new TachyonManifold(input);
+  return tm.runQuantum();
 }
 
 class TachyonManifold {
@@ -32,6 +32,7 @@ class TachyonManifold {
   width: number;
   allSplitters: number[][];
   totalSplits = 0;
+  totalPaths = 1;
 
   constructor(input: string) {
     const [first, ...lines] = input.split("\n");
@@ -47,23 +48,50 @@ class TachyonManifold {
   }
 
   run() {
-    let tachyons = [this.start];
+    let tachyons = new Set([this.start]);
     for (const splitters of this.allSplitters) {
       tachyons = this.splitTachyons(tachyons, splitters);
     }
+    return this.totalSplits;
   }
 
-  private splitTachyons(tachyons: number[], splitters: number[]) {
-    let next = new Set<number>();
+  runQuantum() {
+    let tachyons = new Map([[this.start, 1]]);
+    for (const splitters of this.allSplitters) {
+      tachyons = this.splitTachyonsQuantum(tachyons, splitters);
+    }
+    return this.totalPaths;
+  }
+
+  private splitTachyons(tachyons: Set<number>, splitters: number[]) {
+    let next: typeof tachyons = new Set();
     for (let tachyon of tachyons) {
       if (splitters.includes(tachyon)) {
-        if (tachyon + 1 < this.width) next.add(tachyon + 1);
-        if (tachyon - 1 >= 0) next.add(tachyon - 1);
+        next.add(tachyon + 1);
+        next.add(tachyon - 1);
         this.totalSplits++;
       } else {
         next.add(tachyon);
       }
     }
-    return [...next];
+    return next;
+  }
+
+  private splitTachyonsQuantum(
+    tachyons: Map<number, number>,
+    splitters: number[]
+  ) {
+    let next: typeof tachyons = new Map();
+    const inc = (t: number, c: number) => next.set(t, (next.get(t) ?? 0) + c);
+    for (let [tachyon, count] of tachyons) {
+      if (splitters.includes(tachyon)) {
+        inc(tachyon + 1, count);
+        inc(tachyon - 1, count);
+        this.totalPaths += count;
+      } else {
+        inc(tachyon, count);
+      }
+    }
+    return next;
   }
 }
