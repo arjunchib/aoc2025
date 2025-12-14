@@ -50,7 +50,28 @@ export function part1(input: string) {
 }
 
 export function part2(input: string) {
-  return 20;
+  const boxes = parseInput(input);
+  const boxIndexes = boxes.map((_, i) => i);
+  const connections = pairwise(boxIndexes).sort(
+    ([a1, a2], [b1, b2]) =>
+      dist(boxes[a1]!, boxes[a2]!) - dist(boxes[b1]!, boxes[b2]!)
+  );
+  const circuits = new Set(boxIndexes.map((i) => new Set([i])));
+  for (let [a_i, b_i] of connections) {
+    const a = circuits.values().find((c) => c.has(a_i));
+    const b = circuits.values().find((c) => c.has(b_i));
+    if (!a || !b) throw new Error("Missing circuit");
+    circuits.delete(a);
+    circuits.delete(b);
+    circuits.add(a.union(b));
+    if (circuits.size === 1) {
+      const boxA = boxes[a_i];
+      const boxB = boxes[b_i];
+      if (!boxA || !boxB) throw new Error("Invalid boxes");
+      return boxA[0] * boxB[0];
+    }
+  }
+  throw new Error("Final connection not found");
 }
 
 function parseInput(input: string) {
